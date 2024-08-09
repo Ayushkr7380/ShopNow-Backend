@@ -1,3 +1,4 @@
+import {Address} from "../../Models/ShopNow.Address.Model.js";
 import { Cart } from "../../Models/ShopNow.AddToCart.Model.js";
 import { User } from "../../Models/ShopNow.User.Model.js";
 
@@ -281,5 +282,77 @@ export const updateFromCart = async(req,res,next)=>{
             success:false,
             message:error.message
         })
+    }
+}
+
+export const addAddress = async(req,res,next)=>{
+    try {
+        const { id } = req.user;
+        if(!id){
+            return res.status(400).json({
+                success:false,
+                message:'User not LoggedIn'
+            })
+        }
+
+        const {fullname , phonenumber , pincode , city , state , housenumber , roadname } = req.body;
+        if(!fullname || !phonenumber || !pincode || !city || !state || !housenumber || !roadname ){
+            return res.status(400).json({
+                success:false,
+                message : 'All fields are required..!!'
+            })
+        }
+
+        const address = await Address.create({
+            user:id,
+            fullname,
+            phonenumber,
+            pincode,
+            city,
+            state,
+            housenumber,
+            roadname
+        })
+
+        if(!address){
+            return res.status(400).json({
+                success:false,
+                message:'Failed to save address..'
+            })
+        }
+
+        res.status(200).json({
+            success:true,
+            message:'Address Saved Successfully...',
+            address
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+export const showaddress = async(req,res,next)=>{
+    try {
+        const {id} = req.user;
+        const address = await Address.find({user:id});
+        if(!address){
+            return res.status(400).json({
+                success:false,
+                message:'No save Addresses..'
+            })
+        }
+        res.status(200).json({
+            success:true,
+            message:'Saved address fetched successfully..',
+            address
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })       
     }
 }

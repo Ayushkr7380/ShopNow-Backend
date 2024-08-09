@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { AddtoCart, getUserAddtoCart, getUserWishlist, removeFromCart, updateFromCart, Userdata, UserLogin, UserLogout, UserSignUp, Userwishlist } from '../Controllers/UserController/ShopNowUser.controllers.js';
+import { addAddress, AddtoCart, getUserAddtoCart, getUserWishlist, removeFromCart, showaddress, updateFromCart, Userdata, UserLogin, UserLogout, UserSignUp, Userwishlist } from '../Controllers/UserController/ShopNowUser.controllers.js';
 import { LoggedIn } from '../Middleware/LoggedIn.js';
 
 const router = Router();
@@ -21,5 +21,9 @@ router.get('/',LoggedIn,Userdata);
 router.post('/removeitemfromaddtocart',LoggedIn,removeFromCart);
 
 router.post('/updateitemfromaddtocart',LoggedIn,updateFromCart);
+
+router
+.post('/addaddress',LoggedIn,addAddress)
+.get('/addaddress',LoggedIn,showaddress);
 
 export default router;
