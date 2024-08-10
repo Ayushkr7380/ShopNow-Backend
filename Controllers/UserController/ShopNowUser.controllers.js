@@ -1,5 +1,6 @@
 import {Address} from "../../Models/ShopNow.Address.Model.js";
 import { Cart } from "../../Models/ShopNow.AddToCart.Model.js";
+import { Order } from "../../Models/ShopNow.Order.Model.js";
 import { User } from "../../Models/ShopNow.User.Model.js";
 
 const cookieOptions = {
@@ -356,3 +357,78 @@ export const showaddress = async(req,res,next)=>{
         })       
     }
 }
+
+export const placeOrder = async(req,res,next) =>{
+    try {
+        const {id} = req.user;
+        const { cartitems , addressid , totalprice } = req.body;
+        if(!cartitems || cartitems.length === 0 ){
+            return res.status(400).json({
+                success:false,
+                message:'Cart is Empty'
+            })
+        }
+        if(!addressid || !totalprice){
+            return res.status(400).json({
+                success:false,
+                message:'Please select the address..'
+            })
+        }
+
+        const items = cartitems.map((ele)=>{
+            return {
+                product:ele.products._id,
+                quantity:ele.noofitems
+            }
+        })
+
+        const orders = await Order.create({
+            user:id,
+            items:items,
+            totalprice:totalprice,
+            address:addressid
+        })
+
+        if(!orders){
+            return res.status(400).json({
+                success:false,
+                message:'Order failed..'
+            })
+        }
+
+        res.status(200).json({
+            success:true,
+            message:'Order placed successfully',
+            orders
+        })
+        
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+
+export const deleteAddtoCart = async(req,res,next)=>{
+    try {
+        const { id } = req.user;
+        const cart = await Cart.deleteMany({user:id});
+        if(!cart){
+            return res.status(400).json({
+                success:false,
+                message:'Failed to remove cart items'
+            })
+        }
+        res.status(200).json({
+            success:true,
+            message:'All items have been removed from the cart'
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+} 
