@@ -2,6 +2,7 @@ import {Address} from "../../Models/ShopNow.Address.Model.js";
 import { Cart } from "../../Models/ShopNow.AddToCart.Model.js";
 import { Order } from "../../Models/ShopNow.Order.Model.js";
 import { User } from "../../Models/ShopNow.User.Model.js";
+import { Wishlist } from "../../Models/ShopNow.Wishlists.Model.js";
 
 const cookieOptions = {
     httpOnly : true,
@@ -142,8 +143,62 @@ export const Userdata = async(req,res,next)=>{
 }
 
 export const Userwishlist = async(req,res,next)=>{
-    const { id } = req.user;
-    
+    try {
+        const { id } = req.user;
+        const { productid } = req.body;
+        if(!productid){
+            return res.status(400).json({
+                success:false,
+                message:'Failed to find product id..'
+            })
+        }
+        const wishlist = await Wishlist.findOne({ user:id ,product:productid});
+        if(!wishlist){
+            await Wishlist.create({
+                user:id,
+                product:productid
+            });
+            return res.status(200).json({
+                success: true,
+                message: 'Product added to wishlist.',
+            });
+        }       
+        else{
+            await Wishlist.deleteOne({ user:id , product:productid});
+            return res.status(200).json({
+                success: true,
+                message: 'Product removed from wishlist.',
+            });
+        }
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })   
+    }    
+}
+
+export const getUserWishlist = async(req,res,next)=>{
+    try {
+        const { id } = req.user;
+        const wishlist = await Wishlist.find({user:id}).populate('product');
+        if(!wishlist){
+            return res.status(400).json({
+                success:false,
+                message:'No item found..'
+            });
+        }
+        res.status(200).json({
+            success:true,
+            message:'Wishlist item fetched successfully..',
+            wishlist
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
 }
 
 export const AddtoCart = async(req,res,next) =>{
@@ -215,9 +270,7 @@ export const getUserAddtoCart = async(req,res,next)=>{
     }
 }
 
-export const getUserWishlist = async(req,res,next)=>{
 
-}
 
 export const removeFromCart = async(req,res,next)=>{
     const { itemid } = req.body;
