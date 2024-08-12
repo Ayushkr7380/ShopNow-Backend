@@ -485,3 +485,27 @@ export const deleteAddtoCart = async(req,res,next)=>{
         })
     }
 } 
+
+
+export const viewOrder = async(req,res,next) =>{
+    try {
+        const { id } = req.user;
+        const orders = await Order.find({user:id}).populate('items.product');
+        if(!orders){
+            return res.status(400).json({
+                success:false,
+                message:'Failed to find orders..'
+            })
+        }
+        res.status(200).json({
+            success:true,
+            message:'Orders fetched successfully..',
+            orders
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
