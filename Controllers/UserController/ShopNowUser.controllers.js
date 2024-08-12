@@ -490,7 +490,7 @@ export const deleteAddtoCart = async(req,res,next)=>{
 export const viewOrder = async(req,res,next) =>{
     try {
         const { id } = req.user;
-        const orders = await Order.find({user:id}).populate('items.product');
+        const orders = await Order.find({user:id}).populate('items.product address');
         if(!orders){
             return res.status(400).json({
                 success:false,
