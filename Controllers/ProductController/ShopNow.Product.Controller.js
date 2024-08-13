@@ -16,13 +16,13 @@ export const Products = async(req,res,next) =>{
         if(filteredproducts.length === 0){
             return res.status(400).json({
                 success : false,
-                message : 'Failed to Fetch Watch Products'
+                message : 'Failed to Fetch  Products'
             })
         };
 
         res.status(200).json({
             success : true,
-            message : 'Watches Fetched Successfully..',
+            message : 'Products Fetched Successfully..',
             filteredproducts
         })
     } catch (error) {
@@ -33,3 +33,31 @@ export const Products = async(req,res,next) =>{
     }
 }
 
+export const eachItem = async(req,res,next) =>{
+    try {
+        const { id } = req.params;
+        if(!id){
+            return res.status(400).json({
+                success:false,
+                message:'ProductId is required..'
+            })
+        }
+        const item = await Product.findById(id);
+        if(!item){
+            return res.status(400).json({
+                success:false,
+                message:'Item not found in the database..'
+            })
+        }
+        res.status(200).json({
+            success:true,
+            message:'Item fetched successfully..',
+            item
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
