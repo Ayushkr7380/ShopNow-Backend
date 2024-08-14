@@ -515,3 +515,32 @@ export const viewOrder = async(req,res,next) =>{
         })
     }
 }
+
+export const removeFromWishlist = async(req,res,next) =>{
+    try {
+        const { id } = req.user;
+        const { wishlistid } = req.body;
+        if(!wishlistid){
+            return res.status(400).json({
+                success:false,
+                message:'Wishlist id is required..'
+            })
+        }
+        const wishlist  = await Wishlist.findOneAndDelete({user:id,_id:wishlistid});
+        if(!wishlist){
+            return res.status(400).json({
+                success:false,
+                message:'Failed to remove from wishlist'
+            })
+        }
+        res.status(200).json({
+            success:true,
+            message:"Remove item from wishlist"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}

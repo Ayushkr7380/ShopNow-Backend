@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { addAddress, AddtoCart, deleteAddtoCart, getUserAddtoCart, getUserWishlist, placeOrder, removeFromCart, showaddress, updateFromCart, Userdata, UserLogin, UserLogout, UserSignUp, Userwishlist, viewOrder } from '../Controllers/UserController/ShopNowUser.controllers.js';
+import { addAddress, AddtoCart, deleteAddtoCart, getUserAddtoCart, getUserWishlist, placeOrder, removeFromCart, removeFromWishlist, showaddress, updateFromCart, Userdata, UserLogin, UserLogout, UserSignUp, Userwishlist, viewOrder } from '../Controllers/UserController/ShopNowUser.controllers.js';
 import { LoggedIn } from '../Middleware/LoggedIn.js';
 
 const router = Router();
@@ -11,6 +11,8 @@ router.post('/logout',LoggedIn,UserLogout);
 router
 .post('/wishlist',LoggedIn,Userwishlist)
 .get('/wishlist',LoggedIn,getUserWishlist);
+
+router.post("/removeitemfromwishlist",LoggedIn,removeFromWishlist);
 
 router
 .post('/addtocart',LoggedIn,AddtoCart)
