@@ -421,18 +421,24 @@ export const placeOrder = async(req,res,next) =>{
                 message:'Cart is Empty'
             })
         }
-        if(!addressid || !totalprice){
+        if(!addressid ){
             return res.status(400).json({
                 success:false,
                 message:'Please select the address..'
             })
         }
+        if(!totalprice ){
+            return res.status(400).json({
+                success:false,
+                message:'Price is not mentioned..'
+            })
+        }
 
-        const items = cartitems.map((ele)=>{
-            return {
-                product:ele.products._id,
-                quantity:ele.noofitems
-            }
+            const items = cartitems.map((ele)=>{
+                return {
+                    product:ele.products._id,   
+                    quantity:ele.noofitems
+                }
         })
 
         const orders = await Order.create({
