@@ -544,3 +544,32 @@ export const removeFromWishlist = async(req,res,next) =>{
         })
     }
 }
+
+export const deleteAddress = async(req,res,next)=>{
+    try {
+        const { id } = req.user;
+        const { addressid } = req.body;
+        if(!addressid){
+            return res.status(400).json({
+                success:false,
+                message:'Address id is required..'
+            })
+        }
+        const address = await Address.findOneAndDelete({_id:addressid,user:id});
+        if(!address){
+            return res.status(400).json({
+                success:false,
+                message:'address not found..'
+            })
+        }
+        res.status(200).json({
+            success:true,
+            message:'Address successfully deleted..'
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
