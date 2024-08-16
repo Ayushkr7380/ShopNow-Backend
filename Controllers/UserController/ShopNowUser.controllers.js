@@ -573,3 +573,36 @@ export const deleteAddress = async(req,res,next)=>{
         })
     }
 }
+export const editProfile = async(req,res,next)=>{
+    try {
+        const { id } = req.user;
+        const { editProfile } = req.body;
+        if(!editProfile){
+            return res.status(400).json({
+                success:false,
+                message:'Data provided by user is empty..'
+            })
+        }
+        const user = await User.findByIdAndUpdate({_id:id},{
+            name:editProfile.name,
+            phone:editProfile.phone,
+            email:editProfile.email
+        },{ new: true }).select("-password");
+        if(!user){
+            return res.status(400).json({
+                success:false,
+                message:'Failed to update profile'
+            })
+        }
+        res.status(200).json({
+            success:true,
+            message:'Profile updated successfully',
+            user
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
