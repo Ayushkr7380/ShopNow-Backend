@@ -61,3 +61,40 @@ export const eachItem = async(req,res,next) =>{
         })
     }
 }
+
+export const searchItem = async(req,res,next)=>{
+    try {
+        const { search } = req.query;
+        if(!search){
+            return res.status(400).json({
+                success:false,
+                message:'Search field is empty..'
+            })
+        }
+
+        const product = await Product.find({
+            $or:[
+                { ProductName: { $regex: search, $options: 'i' } },
+                { ProductType: { $regex: search, $options: 'i' } },
+                { ProductBrand: { $regex: search, $options: 'i' } },
+                { ProductDescription: { $regex: search, $options: 'i' } }
+            ]
+        })
+        if(product.length === 0){
+            return res.status(404).json({
+                success:false,
+                message:'No products found.'
+            })
+        }
+        res.status(200).json({
+            success:true,
+            message:'Products fetched successfully.',
+            product
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}

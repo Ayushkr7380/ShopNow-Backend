@@ -9,6 +9,8 @@ router.post('/login',UserLogin);
 router.post('/logout',LoggedIn,UserLogout);
 router.post('/editprofile',LoggedIn,editProfile);
 
+
+
 router
 .post('/wishlist',LoggedIn,Userwishlist)
 .get('/wishlist',LoggedIn,getUserWishlist);
