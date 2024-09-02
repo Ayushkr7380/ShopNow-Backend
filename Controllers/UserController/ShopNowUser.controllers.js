@@ -9,6 +9,8 @@ const cookieOptions = {
     secure : true,
     maxAge : 7 * 24 * 60 * 60 * 1000 
 }
+
+//user registration controller
 export const UserSignUp = async(req,res,next) =>{
     try {
         const {name , phone , email , password } = req.body;
@@ -60,6 +62,7 @@ export const UserSignUp = async(req,res,next) =>{
 
 };
 
+//user login controller
 export const UserLogin = async(req,res,next) =>{
     try {
         const { phone , password } = req.body;
@@ -98,6 +101,7 @@ export const UserLogin = async(req,res,next) =>{
     }
 };
 
+//user logout controller
 export const UserLogout = async(req,res,next) =>{
     try {
         res.cookie('token',null,{
@@ -117,6 +121,8 @@ export const UserLogout = async(req,res,next) =>{
         })
     }
 }
+
+//user details controller
 export const Userdata = async(req,res,next)=>{
     try {
         const { id } = req.user;
@@ -142,6 +148,7 @@ export const Userdata = async(req,res,next)=>{
 
 }
 
+//add and remove wishlist controller
 export const Userwishlist = async(req,res,next)=>{
     try {
         const { id } = req.user;
@@ -178,6 +185,7 @@ export const Userwishlist = async(req,res,next)=>{
     }    
 }
 
+//wishlist controller
 export const getUserWishlist = async(req,res,next)=>{
     try {
         const { id } = req.user;
@@ -201,6 +209,7 @@ export const getUserWishlist = async(req,res,next)=>{
     }
 }
 
+//addtocart controller
 export const AddtoCart = async(req,res,next) =>{
     const {id} = req.user;
     const {productid,noofitems,totalprice} = req.body;
@@ -246,6 +255,7 @@ export const AddtoCart = async(req,res,next) =>{
     }
 }
 
+//addtocart details controller
 export const getUserAddtoCart = async(req,res,next)=>{
     const { id } = req.user;
     try {        
@@ -270,8 +280,7 @@ export const getUserAddtoCart = async(req,res,next)=>{
     }
 }
 
-
-
+//remove item from cart controller
 export const removeFromCart = async(req,res,next)=>{
     const { itemid } = req.body;
     try {    
@@ -304,6 +313,7 @@ export const removeFromCart = async(req,res,next)=>{
     }
 }
 
+//update cart controller
 export const updateFromCart = async(req,res,next)=>{
     const { itemid,quantity,priceofEachItem } = req.body;
     try {
@@ -339,6 +349,7 @@ export const updateFromCart = async(req,res,next)=>{
     }
 }
 
+//add address controller
 export const addAddress = async(req,res,next)=>{
     try {
         const { id } = req.user;
@@ -388,6 +399,7 @@ export const addAddress = async(req,res,next)=>{
     }
 }
 
+//show address controller
 export const showaddress = async(req,res,next)=>{
     try {
         const {id} = req.user;
@@ -411,6 +423,7 @@ export const showaddress = async(req,res,next)=>{
     }
 }
 
+//place order controller
 export const placeOrder = async(req,res,next) =>{
     try {
         const {id} = req.user;
