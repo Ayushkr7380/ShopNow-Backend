@@ -1,5 +1,6 @@
 import { Product } from "../../Models/ShopNow.Products.Model.js"
 
+//controller for types of product 
 export const Products = async(req,res,next) =>{
     try {
         const {type} = req.query;
@@ -33,6 +34,7 @@ export const Products = async(req,res,next) =>{
     }
 }
 
+//controller for each product
 export const eachItem = async(req,res,next) =>{
     try {
         const { id } = req.params;
@@ -62,6 +64,7 @@ export const eachItem = async(req,res,next) =>{
     }
 }
 
+//controller for search product
 export const searchItem = async(req,res,next)=>{
     try {
         const { search } = req.query;
