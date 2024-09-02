@@ -482,6 +482,7 @@ export const placeOrder = async(req,res,next) =>{
     }
 }
 
+//delete all item from cart at once controller
 export const deleteAddtoCart = async(req,res,next)=>{
     try {
         const { id } = req.user;
@@ -505,7 +506,7 @@ export const deleteAddtoCart = async(req,res,next)=>{
     }
 } 
 
-
+//view all orders controller
 export const viewOrder = async(req,res,next) =>{
     try {
         const { id } = req.user;
@@ -529,6 +530,7 @@ export const viewOrder = async(req,res,next) =>{
     }
 }
 
+//remove item from wishlist controller
 export const removeFromWishlist = async(req,res,next) =>{
     try {
         const { id } = req.user;
@@ -558,6 +560,7 @@ export const removeFromWishlist = async(req,res,next) =>{
     }
 }
 
+//delete address controller
 export const deleteAddress = async(req,res,next)=>{
     try {
         const { id } = req.user;
@@ -586,6 +589,8 @@ export const deleteAddress = async(req,res,next)=>{
         })
     }
 }
+
+//edit user profile controller
 export const editProfile = async(req,res,next)=>{
     try {
         const { id } = req.user;
