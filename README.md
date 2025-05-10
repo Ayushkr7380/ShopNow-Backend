@@ -10,31 +10,52 @@ Project Structure
 
 
 ShopNowBackend/
+
 ├── Config/
-│   └── DBConfig.js              # MongoDB connection setup
+
+│   └── DBConfig.js    
+
 ├── Controllers/
+
 │   ├── ShopNowAdmin.controllers.js
+
 │   ├── ProductController/
+
 │   └── UserController/
+
 ├── Middleware/
-│   ├── LoggedIn.js              # JWT auth middleware
-│   └── multer.middleware.js     # Image upload via multer
-├── Models/                      # Mongoose schemas
+
+│   ├── LoggedIn.js    
+
+│   └── multer.middleware.js  
+
+├── Models/       
+
 ├── Routers/
+
 │   ├── ShopNowAdmin.js
+
 │   ├── ShopNowProducts.js
+
 │   └── ShopNowUser.js
+
 ├── .gitignore
-├── .env                         # Environment variables (not pushed to Git)
-├── app.js                       # Express app config
-├── index.js                     # Entry point
+
+├── .env        
+
+├── app.js    
+
+├── index.js    
+
 ├── package.json
+
 ├── package-lock.json
 
 
 
 
 Technologies Used
+
 
 
 Node.js + Express.js
@@ -94,12 +115,16 @@ npm install
 
 Create a .env file in the root directory:
 
-
 PORT=5000
+
 MONGO_URL=your_mongodb_uri
+
 JWT_SECRET=your_jwt_secret
+
 CLOUDINARY_NAME=your_cloudinary_name
+
 CLOUDINARY_API_KEY=your_api_key
+
 CLOUDINARY_API_SECRET=your_api_secret
 
 
@@ -107,6 +132,7 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 
 nodemon index.js
+
 App runs at http://localhost:5000
 
 
@@ -115,11 +141,14 @@ API Endpoints
 
 🔐 Admin /auth
 
-
 POST /registration – Admin register
+
 POST /login – Admin login
+
 POST /logout – Admin logout
+
 GET / – Admin dashboard
+
 POST / – Add product (with image via multer)
 
 
@@ -127,13 +156,21 @@ POST / – Add product (with image via multer)
 
 
 POST /registration – User signup
+
 POST /login – User login
+
 POST /logout – Logout
+
 POST /editprofile – Edit profile
+
 GET / – Get user profile
+
 Wishlist: /wishlist, /removeitemfromwishlist
+
 Cart: /addtocart, /removeitemfromaddtocart, /updateitemfromaddtocart, /deleteaddtocart
+
 Address: /addaddress, /deleteaddress
+
 Orders: /placeorder, /vieworder
 
 
@@ -141,12 +178,12 @@ Orders: /placeorder, /vieworder
 
 
 GET / – List all products
+
 GET /eachitem/:id – Get product by ID
+
 GET /search – Search product by name
 
 
 📄 License
 
-
 Licensed under the ISC License.
-
