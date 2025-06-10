@@ -4,10 +4,17 @@ import { Order } from "../../Models/ShopNow.Order.Model.js";
 import { User } from "../../Models/ShopNow.User.Model.js";
 import { Wishlist } from "../../Models/ShopNow.Wishlists.Model.js";
 
+// const cookieOptions = {
+//     httpOnly : true,
+//     secure : true,
+//     maxAge : 7 * 24 * 60 * 60 * 1000 
+// }
+
 const cookieOptions = {
-    httpOnly : true,
-    secure : true,
-    maxAge : 7 * 24 * 60 * 60 * 1000 
+    httpOnly:true,
+    secure:true,
+    maxAge : 5 * 24 * 60 * 60 * 1000,
+    sameSite: "None", // Allows cross-site cookies
 }
 
 //user registration controller
@@ -104,11 +111,18 @@ export const UserLogin = async(req,res,next) =>{
 //user logout controller
 export const UserLogout = async(req,res,next) =>{
     try {
-        res.cookie('token',null,{
-            maxAge:0,
-            secure : true,
-            httpOnly : true
-        })
+        // res.cookie('token',null,{
+        //     maxAge:0,
+        //     secure : true,
+        //     httpOnly : true
+        // })
+
+        res.cookie("token", "", {
+            httpOnly: true,
+            secure: true,  // Required for HTTPS
+            sameSite: "None",  // Required for cross-site cookies
+            expires: new Date(0),  // Expires the cookie immediately
+        });
 
         res.status(200).json({
             success:true,
