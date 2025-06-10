@@ -12,7 +12,7 @@ cloudinary.v2.config({
 const PORT = process.env.PORT || 5001;
 const LOCALHOST = process.env.LOCALHOST || '127.0.0.1';
 
-app.listen(PORT,LOCALHOST,async()=>{
+app.listen(PORT,async()=>{
     console.log(`Server ${LOCALHOST} is running at PORT ${PORT}`);
     await DBConfig();
 });
