@@ -1,7 +1,14 @@
 import app from './app.js'
 import DBConfig from './Config/DBConfig.js'
 import cloudinary from 'cloudinary';
+import fs from 'fs';
+import path from 'path';
 
+// Ensure uploads/ folder exists
+const uploadDir = path.resolve('uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
 
 cloudinary.v2.config({
     cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
