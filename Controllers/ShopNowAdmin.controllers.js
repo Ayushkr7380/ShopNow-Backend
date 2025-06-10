@@ -142,8 +142,8 @@ export const AddProducts = async(req,res,next) =>{
 
                 //Remove files from local
                 try {
-                    await fs.access(filePath); // Check if file exists
-                    await fs.rm(filePath);     // Then remove it
+                     await fs.rm(filePath, { force: true }); // 🔐 Safely delete even if missing
+                    
                 } catch (err) {
                         console.warn('File not found or could not be deleted:', err.message);
                 }
