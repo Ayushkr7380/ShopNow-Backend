@@ -18,11 +18,26 @@ app.use(cookieParser());
 //     credentials: true
 // }));
 
-const corsOptions ={
-    origin:'http://localhost:5173', 
-    credentials:true,   //access-control-allow-credentials:true
-    optionSuccessStatus:200
+// const corsOptions ={
+//     origin:'http://localhost:5173', 
+//     credentials:true,   //access-control-allow-credentials:true
+//     optionSuccessStatus:200
+// }
+
+// const corsOptions ={
+//     origin:'https://shopnow-frontend-zzts.onrender.com/', 
+//     credentials:true,   //access-control-allow-credentials:true
+//     optionSuccessStatus:200
+// }
+
+const corsOptions = {
+  origin: 'https://shopnow-frontend-zzts.onrender.com',  // no trailing slash
+  credentials: true,   // Access-Control-Allow-Credentials: true
+  optionsSuccessStatus: 200, // fix typo here
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization']   // allowed headers
 }
+
 app.use('*',cors(corsOptions));
 
 
