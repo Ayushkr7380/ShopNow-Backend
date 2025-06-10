@@ -25,13 +25,13 @@ app.use(cookieParser());
 // }
 
 // const corsOptions ={
-//     origin:'https://shopnow-frontend-zzts.onrender.com/', 
+//     origin:process.env.FRONTEND_URL, 
 //     credentials:true,   //access-control-allow-credentials:true
 //     optionSuccessStatus:200
 // }
 
 const corsOptions = {
-  origin: 'https://shopnow-frontend-zzts.onrender.com',  // no trailing slash
+  origin: process.env.FRONTEND_URL,  // no trailing slash
   credentials: true,   // Access-Control-Allow-Credentials: true
   optionsSuccessStatus: 200, // fix typo here
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // allowed HTTP methods
