@@ -122,6 +122,7 @@ export const AddProducts = async(req,res,next) =>{
         });
         console.log(req.file)
         if(req.file){
+            const filePath = `uploads/${req.file.filename}`;
             try {
                 const result = await cloudinary.v2.uploader.upload(req.file.path,{
                     folder:'shopnowproductphoto',
@@ -140,7 +141,12 @@ export const AddProducts = async(req,res,next) =>{
                 await product.save();
 
                 //Remove files from local
-                fs.rm(`uploads/${req.file.filename}`)
+                try {
+                    await fs.access(filePath); // Check if file exists
+                    await fs.rm(filePath);     // Then remove it
+                } catch (err) {
+                        console.warn('File not found or could not be deleted:', err.message);
+                }
 
             } catch (error) {
                 return res.status(500).json({
