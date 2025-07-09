@@ -3,7 +3,8 @@ import { Product } from "../../Models/ShopNow.Products.Model.js"
 //controller for types of product 
 export const Products = async(req,res,next) =>{
     try {
-        const {type} = req.query;
+        const {type} = req.query
+            ;
         console.log(type)
         const products = await Product.find();
         if(!products){
