@@ -1,7 +1,7 @@
 import { Product } from "../../Models/ShopNow.Products.Model.js"
 
 //controller for types of product 
-export const Products = async(req,res,next) =>{
+export const Products = async(req,res) =>{
     try {
         const {type} = req.query
             ;
@@ -31,6 +31,40 @@ export const Products = async(req,res,next) =>{
         return res.status(500).json({
             success : false,
             message : error.message
+        })
+    }
+}
+export const HomeProducts = async(req,res,next) =>{
+    
+    try{
+        const categories = [
+            "menstshirts", "menshoe", "mensshirts", "mensjeans", "mensjacket",
+            "womensshoes", "womensshirts", "womenstshirts", "womensjeans", "womensjacket",
+            "kidsjeans", "kidsjacket", "kidsshirt", "laptop", "watch"
+        ];
+
+        const promises = categories.map(type =>
+            Product.find({ ProductType: type })
+            .limit(4)
+            .select("ProductName ProductPrice ProductPhoto")
+        );
+
+        const data = await Promise.all(promises);
+
+        let results = {};
+        categories.forEach((type, idx) => {
+        results[type] = data[idx];
+        });
+
+        res.json({
+            success:true,
+            results
+        })
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            message:error.message
         })
     }
 }

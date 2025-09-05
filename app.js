@@ -31,7 +31,7 @@ app.use(cookieParser());
 // }
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,  // no trailing slash
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",  // no trailing slash
   credentials: true,   // Access-Control-Allow-Credentials: true
   optionsSuccessStatus: 200, // fix typo here
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // allowed HTTP methods
