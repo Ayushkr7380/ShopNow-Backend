@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+import emailSend from '../../utils/sendEmail.js';
 import {Address} from "../../Models/ShopNow.Address.Model.js";
 import { Cart } from "../../Models/ShopNow.AddToCart.Model.js";
 import { Order } from "../../Models/ShopNow.Order.Model.js";
@@ -28,14 +30,32 @@ export const UserSignUp = async(req,res,next) =>{
             })
         };
 
-        if(password < 3 ){
+        if(password.length < 3 ){
             return res.status(400).json({
                 success : false ,
                 message : 'Password must be greater than 2'
             });
         };
 
-        const user = await User.create({
+        let user = await User.findOne({email})
+        if(user){
+            return res.status(409).json({
+                    success:false,
+                    message:"Account already exist from this email."
+                
+            })
+        }
+
+        user = await User.findOne({phone})
+        if(user){
+            return res.status(409).json({
+                    success:false,
+                    message:"Account already exist from this phone number."
+                
+            })
+        }
+
+        user = await User.create({
             name,
             email,
             phone,
@@ -55,7 +75,7 @@ export const UserSignUp = async(req,res,next) =>{
 
         user.password  = undefined;
 
-        res.status(200).json({
+        res.status(201).json({
             success : true,
             message : 'User registration successful..',
             user
@@ -94,7 +114,7 @@ export const UserLogin = async(req,res,next) =>{
 
         checkUser.password = undefined;
 
-        res.status(200).json({
+        res.status(201).json({
             success : true,
             message : 'User LoggedIn Successfully..',
             checkUser
@@ -124,7 +144,7 @@ export const UserLogout = async(req,res,next) =>{
             expires: new Date(0),  // Expires the cookie immediately
         });
 
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'User Logout Successfully..'
         })
@@ -136,6 +156,123 @@ export const UserLogout = async(req,res,next) =>{
     }
 }
 
+ export const forgotPassword = async(req,res)=>{
+    try{
+        const {email} = req.body;
+
+        if(!email){
+            return res.status(404).json({
+                success:false,
+                message:"Email field is empty."
+            })
+        }
+
+        const user = await User.findOne({email}).select("-password");
+
+        if(!user){
+            return res.status(404).json({
+                success:false,
+                message:"No account found."
+            })
+        }
+
+        const token = crypto.randomBytes(32).toString("hex");
+
+        user.resetVerificationToken = token;
+        user.resetVerificationExpiry = Date.now() + 15 * 60 * 1000;
+
+        await user.save();
+
+        const options = {
+            name:user.name,
+            instructions:"Reset Password.<br/>This link will expire in 15 mintues",
+            email:email,
+            route:"reset-password",
+            token:token,
+            subject:"Reset Password",
+        };
+
+        await emailSend(options);
+
+        res.status(201).json({
+            success:true,
+            message:"Password reset link has been sent to your email."
+        })
+    }catch(error){
+        res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+ }
+
+ export const resetPassword = async(req,res)=>{
+    try{
+        // const { token } = req.params;
+        const { password , repeatPassword , token } = req.body;
+
+        if(!token || !password || !repeatPassword){
+            return res.status(404).json({
+                success:false,
+                message:"All fields are required."
+            })
+        }
+
+        if(password !== repeatPassword){
+            return res.status(400).json({
+                success:false,
+                message:"Password and confirm password do not match."
+            })
+        }
+
+        const user = await User.findOne({
+            $and:[
+                {
+                    resetVerificationToken:token
+                },
+                {
+                    resetVerificationExpiry:{$gte:Date.now()}
+                }
+            ]
+        })
+
+        if(!user){
+            return res.status(404).json({
+                success:false,
+                message:"Link Expired.Please resend again."
+
+            })
+        }
+
+        if(await user.comparepassword(password)){
+            return res.status(400).json({
+                success:false,
+                message:"New password cannot be the same as the old password"
+            })
+        }
+
+        user.password = password;
+        user.resetVerificationToken = undefined;
+        user.resetVerificationExpiry = undefined;
+
+        await user.save();
+
+        user.password = undefined;
+
+        res.status(201).json({
+            success:true,
+            message:"Reset Password successfully.",
+            user
+        })
+
+
+    }catch(error){
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+ }
 //user details controller
 export const Userdata = async(req,res,next)=>{
     try {
@@ -147,7 +284,7 @@ export const Userdata = async(req,res,next)=>{
                 message:'User not found..'
             })
         }      
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'User fetched successfully..',
             checkUser
@@ -179,14 +316,14 @@ export const Userwishlist = async(req,res,next)=>{
                 user:id,
                 product:productid
             });
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: 'Product added to wishlist.',
             });
         }       
         else{
             await Wishlist.deleteOne({ user:id , product:productid});
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: 'Product removed from wishlist.',
             });
@@ -210,7 +347,7 @@ export const getUserWishlist = async(req,res,next)=>{
                 message:'No item found..'
             });
         }
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'Wishlist item fetched successfully..',
             wishlist
@@ -256,7 +393,7 @@ export const AddtoCart = async(req,res,next) =>{
             })
         }
 
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'Item Added to Cart'
         })
@@ -277,11 +414,11 @@ export const getUserAddtoCart = async(req,res,next)=>{
         if(!addtocart){
             return res.status(400).json({
                 success:false,
-                message:'Failed to fetch cart details..'
+                message:'No items found in cart for this user'
             })
         }
 
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'cart fetched successfully..',
             addtocart
@@ -314,7 +451,7 @@ export const removeFromCart = async(req,res,next)=>{
             })
         }
 
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'Item removed successfully..',
             cart
@@ -350,7 +487,7 @@ export const updateFromCart = async(req,res,next)=>{
             })
         }
 
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'Item Updated..',
             cart
@@ -400,7 +537,7 @@ export const addAddress = async(req,res,next)=>{
             })
         }
 
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'Address Saved Successfully...',
             address
@@ -424,7 +561,7 @@ export const showaddress = async(req,res,next)=>{
                 message:'No save Addresses..'
             })
         }
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'Saved address fetched successfully..',
             address
@@ -482,7 +619,7 @@ export const placeOrder = async(req,res,next) =>{
             })
         }
 
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'Order placed successfully',
             orders
@@ -507,7 +644,7 @@ export const deleteAddtoCart = async(req,res,next)=>{
                 message:'Failed to remove cart items'
             })
         }
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'All items have been removed from the cart'
         })
@@ -531,7 +668,7 @@ export const viewOrder = async(req,res,next) =>{
                 message:'Failed to find orders..'
             })
         }
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'Orders fetched successfully..',
             orders
@@ -562,7 +699,7 @@ export const removeFromWishlist = async(req,res,next) =>{
                 message:'Failed to remove from wishlist'
             })
         }
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:"Remove item from wishlist"
         })
@@ -592,7 +729,7 @@ export const deleteAddress = async(req,res,next)=>{
                 message:'address not found..'
             })
         }
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'Address successfully deleted..'
         })
@@ -626,7 +763,7 @@ export const editProfile = async(req,res,next)=>{
                 message:'Failed to update profile'
             })
         }
-        res.status(200).json({
+        res.status(201).json({
             success:true,
             message:'Profile updated successfully',
             user

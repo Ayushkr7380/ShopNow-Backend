@@ -1,6 +1,7 @@
 import {Schema , model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'
+import crypto from 'crypto';
 const userSchema = new Schema({
     name:{
         type:String,
@@ -27,7 +28,11 @@ const userSchema = new Schema({
         required : true,
         minLength:[3,'Length of password should be greater than equal to 3'],
         trim:true
-    }
+    },
+    verificationToken:String,
+    verificationExpiry:Date,
+    resetVerificationToken:String,
+    resetVerificationExpiry:Date,
 },{
     timestamps:true
 });
@@ -53,6 +58,14 @@ userSchema.methods = {
     },
     comparepassword : async function(rawpassword){
         return await bcrypt.compare(rawpassword,this.password)
+    },
+    generateVerificationToken : function(){
+        const token = crypto.randomBytes(35).toString("hex");
+
+        this.verificationToken = token;
+        this.verificationExpiry = Date.now() + 15 * 60 * 1000;
+
+        return token;
     }
 }
 
