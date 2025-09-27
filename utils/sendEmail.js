@@ -57,6 +57,17 @@ const emailSend = async(options)=>{
         html:emailBody
     }
 
+
+
+    transporter.verify((err, success) => {
+        if (err) {
+            console.error("SMTP connection failed:", err);
+        } else {
+            console.log("SMTP server is ready to take messages:", success);
+        }
+    });
+
+
     const info = await transporter.sendMail(mailOptions);
 
 
