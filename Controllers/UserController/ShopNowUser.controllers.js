@@ -177,6 +177,13 @@ export const UserLogout = async(req,res,next) =>{
         }
 
         const token = crypto.randomBytes(32).toString("hex");
+        
+        if(!token){
+            return res.status(404).json({
+                success:false,
+                message:"Failed to send email,Try again later."
+            })
+        }
 
         user.resetVerificationToken = token;
         user.resetVerificationExpiry = Date.now() + 15 * 60 * 1000;
@@ -192,7 +199,13 @@ export const UserLogout = async(req,res,next) =>{
             subject:"Reset Password",
         };
 
-        await emailSend(options);
+        const forgetLink = await emailSend(options);
+        if(!forgetLink){
+            return res.status(404).json({
+                success:false,
+                message:"Failed to generate link,Try again later."
+            })
+        }
 
         res.status(201).json({
             success:true,
@@ -210,7 +223,7 @@ export const UserLogout = async(req,res,next) =>{
     try{
         // const { token } = req.params;
         const { password , repeatPassword , token } = req.body;
-
+        // console.log("Token",token)
         if(!token || !password || !repeatPassword){
             return res.status(404).json({
                 success:false,

@@ -1,5 +1,6 @@
 import {config} from "dotenv";
 config();
+
 import nodemailer from 'nodemailer';
 import Mailgen from "mailgen";
 
@@ -14,15 +15,16 @@ const mailGenerator = new Mailgen({
 
 
 
-const transporter = nodemailer.createTransport({
-    host:process.env.EMAIL_HOST,
-    port:process.env.EMAIL_PORT,
-    secure:false,
-    auth:{
-        user:process.env.ADMIN_EMAIL,
-        pass:process.env.ADMIN_PASSWORD
-    }
-})
+    const transporter = nodemailer.createTransport({
+        host:process.env.EMAIL_HOST,
+        port:process.env.EMAIL_PORT,
+        secure:process.env.EMAIL_PORT == 465,
+        auth:{
+            user:process.env.ADMIN_EMAIL,
+            pass:process.env.ADMIN_PASSWORD
+        }
+    })    
+
 
 
 const emailSend = async(options)=>{
@@ -46,6 +48,7 @@ const emailSend = async(options)=>{
     const emailBody = mailGenerator.generate(email);
 
     const emailText = mailGenerator.generatePlaintext(email);
+
     const mailOptions = {
         from:process.env.ADMIN_EMAIL,
         to:options.email,
