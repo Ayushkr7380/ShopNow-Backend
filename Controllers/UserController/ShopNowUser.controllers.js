@@ -209,7 +209,7 @@ export const UserLogout = async(req,res,next) =>{
 
         res.status(201).json({
             success:true,
-            message:"Password reset link has been sent to your email."
+           message: "Password reset link has been sent to your email. Check your inbox and Spam/Bin folder if you don’t see it."
         })
     }catch(error){
         res.status(500).json({

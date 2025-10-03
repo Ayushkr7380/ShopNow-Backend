@@ -2,6 +2,7 @@ import {config} from "dotenv";
 config();
 
 import nodemailer from 'nodemailer';
+import sgTransport from "nodemailer-sendgrid";
 import Mailgen from "mailgen";
 
 
@@ -15,15 +16,11 @@ const mailGenerator = new Mailgen({
 
 
 
-    const transporter = nodemailer.createTransport({
-        host:process.env.EMAIL_HOST,
-        port:process.env.EMAIL_PORT,
-        secure:process.env.EMAIL_PORT == 465,
-        auth:{
-            user:process.env.ADMIN_EMAIL,
-            pass:process.env.ADMIN_PASSWORD
-        }
-    })    
+    const transporter = nodemailer.createTransport(
+        sgTransport({
+            apiKey: process.env.SENDGRID_API_KEY
+        })
+    )    
 
 
 
@@ -56,16 +53,6 @@ const emailSend = async(options)=>{
         text:emailText,
         html:emailBody
     }
-
-
-
-    transporter.verify((err, success) => {
-        if (err) {
-            console.error("SMTP connection failed:", err);
-        } else {
-            console.log("SMTP server is ready to take messages:", success);
-        }
-    });
 
 
     const info = await transporter.sendMail(mailOptions);
