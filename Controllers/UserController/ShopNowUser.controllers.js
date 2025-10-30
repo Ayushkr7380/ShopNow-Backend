@@ -5,6 +5,7 @@ import { Cart } from "../../Models/ShopNow.AddToCart.Model.js";
 import { Order } from "../../Models/ShopNow.Order.Model.js";
 import { User } from "../../Models/ShopNow.User.Model.js";
 import { Wishlist } from "../../Models/ShopNow.Wishlists.Model.js";
+import { client } from '../../Config/RedisConfig.js';
 
 // const cookieOptions = {
 //     httpOnly : true,
@@ -406,6 +407,8 @@ export const AddtoCart = async(req,res,next) =>{
             })
         }
 
+        await client.del("homeProducts");
+
         res.status(201).json({
             success:true,
             message:'Item Added to Cart'
@@ -464,6 +467,9 @@ export const removeFromCart = async(req,res,next)=>{
             })
         }
 
+        await client.del("homeProducts");
+
+
         res.status(201).json({
             success:true,
             message:'Item removed successfully..',
@@ -492,6 +498,9 @@ export const updateFromCart = async(req,res,next)=>{
             { noofitems: quantity, totalprice: priceofEachItem },
             { new: true }  // This option ensures the updated document is returned
         )
+
+        await client.del("homeProducts");
+
 
         if(!cart){
             return res.status(400).json({

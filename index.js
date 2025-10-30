@@ -3,6 +3,7 @@ import DBConfig from './Config/DBConfig.js'
 import cloudinary from 'cloudinary';
 import fs from 'fs';
 import path from 'path';
+import RedisConfig from './Config/RedisConfig.js';
 
 // Ensure uploads/ folder exists
 const uploadDir = path.resolve('uploads');
@@ -21,4 +22,5 @@ const PORT = process.env.PORT || 5001;
 app.listen(PORT,async()=>{
     console.log(`Server is running at PORT ${PORT}`);
     await DBConfig();
+    await RedisConfig();
 });

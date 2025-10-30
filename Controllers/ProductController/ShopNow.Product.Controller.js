@@ -1,10 +1,10 @@
 import { Product } from "../../Models/ShopNow.Products.Model.js"
+import { client } from "../../Config/RedisConfig.js"
 
 //controller for types of product 
 export const Products = async(req,res) =>{
     try {
-        const {type} = req.query
-            ;
+        const {type} = req.query;
         console.log(type)
         const products = await Product.find();
         if(!products){
@@ -37,6 +37,21 @@ export const Products = async(req,res) =>{
 export const HomeProducts = async(req,res,next) =>{
     
     try{
+
+        const cached = await client.get("HomeProducts");
+
+        if(cached){
+            console.log("Cache Hit - HomeProducts");
+
+            return res.status(200).json({
+                success:true,
+                message:"Items fetched successfully from cache",
+                results:JSON.parse(cached)
+            })
+        }
+
+        console.log("Cache Miss - HomeProducts");
+
         const categories = [
             "menstshirts", "menshoe", "mensshirts", "mensjeans", "mensjacket",
             "womensshoes", "womensshirts", "womenstshirts", "womensjeans", "womensjacket",
@@ -55,6 +70,9 @@ export const HomeProducts = async(req,res,next) =>{
         categories.forEach((type, idx) => {
         results[type] = data[idx];
         });
+
+
+        await client.setEx("HomeProducts",60*60*5,JSON.stringify(results));
 
         res.json({
             success:true,
@@ -79,6 +97,17 @@ export const eachItem = async(req,res,next) =>{
                 message:'ProductId is required..'
             })
         }
+
+
+        const cachedItem = await client.get(`product:${id}`);
+        if (cachedItem) {
+            return res.status(200).json({
+                success: true,
+                message: "Item fetched successfully from cache..",
+                item: JSON.parse(cachedItem),
+            });
+        }
+
         const item = await Product.findById(id);
         if(!item){
             return res.status(400).json({
@@ -86,6 +115,10 @@ export const eachItem = async(req,res,next) =>{
                 message:'Item not found in the database..'
             })
         }
+
+        await client.setEx(`product:${id}`, 60 * 60 * 5, JSON.stringify(item));
+
+
         res.status(200).json({
             success:true,
             message:'Item fetched successfully..',
